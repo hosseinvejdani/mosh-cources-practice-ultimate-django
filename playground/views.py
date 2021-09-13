@@ -1,14 +1,18 @@
 from django.shortcuts import render
-from store.models import Product
+from store.models import OrderItem, Product
 
 
 def say_hello(request):
 
-    # find first 5 products
-    products = Product.objects.all()[:5]
+    # # select only title and price for products in dictionary format
+    # products = Product.objects.values('id','title') # retrun dictonary
 
-    # find second 5 products
-    products = Product.objects.all()[5:10]
+    # # select only title and price for products in tuple format
+    # products = Product.objects.values_list('id','title') # retrun tuple
 
-    return render(request, 'hello.html', {'name': 'Hossein', 'products':products})
+    # select products have been ordered and sort them by title
+    product_ids = OrderItem.objects.values('product__id').distinct()
+    queryset = Product.objects.filter(pk__in=product_ids).order_by('title')
+
+    return render(request, 'hello.html', {'name': 'Hossein', 'products':list(queryset)})
 
