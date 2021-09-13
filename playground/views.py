@@ -1,19 +1,35 @@
 from django.shortcuts import render
-from django.db.models import F
 from store.models import Product
 
 
 def say_hello(request):
 
 
-    # # find all the products : inventory = unit_price (this is not sence here but shows F application)
-    # queryset = Product.objects.filter(inventory=F('unit_price'))
-    # list(queryset)
+    # # sort products by title in ASC order and render first 5 of them
+    # products = Product.objects.order_by('title')[:5]
 
-    # find all the products : inventory = collection_id (this is not sence here but shows F application)
-    # queryset = Product.objects.filter(inventory=F('collection__id'))   # or we can use:
-    queryset = Product.objects.filter(inventory=F('collection_id'))
-    list(queryset)
+    # # sort products by title in DSC order and render first 5 of them
+    # products = Product.objects.order_by('-title')[:5]
+
+    # # sort products by title in DSC order then reverse its direction and render first 5 of them
+    # products = Product.objects.order_by('-title').reverse()[:5]
+    
+    # # sort products by unit_price in ASC oreder and then sort them by 
+    # # title in DSC order and render first 10 of them
+    # products = Product.objects.order_by('unit_price','-title')[:10]
+
+    # # find cheapest product in collection 3
+    # products = Product.objects.filter(collection__id=3).order_by('unit_price')[0]
+
+    # # find 5 cheapest products in collection 3
+    # products = Product.objects.filter(collection__id=3).order_by('unit_price')[:5]
+
+    # # find cheapest product in collection 3
+    # products = Product.objects.filter(collection__id=3).earliest('unit_price')
+
+    # find most expensive product in collection 3
+    products = Product.objects.filter(collection__id=3).latest('unit_price')
+
 
     return render(request, 'hello.html', {'name': 'Hossein'})
 
