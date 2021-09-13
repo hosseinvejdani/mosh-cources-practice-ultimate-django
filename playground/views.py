@@ -1,28 +1,18 @@
-from django.db.models import query
 from django.shortcuts import render
-from store.models import Collection, OrderItem, Product
-from django.db.models import Q
+from django.db.models import F
+from store.models import Product
 
 
 def say_hello(request):
-    # # find all the products : inventory < 10 AND unit_price < 20 --> Method 1
-    # queryset = Product.objects.filter(inventory__lt=10,unit_price__lt=20)
+
+
+    # # find all the products : inventory = unit_price (this is not sence here but shows F application)
+    # queryset = Product.objects.filter(inventory=F('unit_price'))
     # list(queryset)
 
-    # find all the products : inventory < 10 AND unit_price < 20 --> Method 2
-    # queryset = Product.objects.filter(inventory__lt=10).filter(unit_price__lt=20)
-    # list(queryset)
-
-    # # # find all the products : inventory < 10 AND unit_price < 20 --> Method 3
-    # queryset = Product.objects.filter(Q(inventory__lt=10) & Q(unit_price__lt=20))
-    # list(queryset)
-
-    # # # find all the products : inventory < 10 OR unit_price < 20 
-    # queryset = Product.objects.filter(Q(inventory__lt=10) & Q(unit_price__lt=20))
-    # list(queryset)
-
-    # # find all the products : inventory < 10 OR inventory > 50 AND unit_price > 30 
-    queryset = Product.objects.filter(Q(inventory__lt=10) | Q(inventory__gt=50) & Q(unit_price__gt=30))
+    # find all the products : inventory = collection_id (this is not sence here but shows F application)
+    # queryset = Product.objects.filter(inventory=F('collection__id'))   # or we can use:
+    queryset = Product.objects.filter(inventory=F('collection_id'))
     list(queryset)
 
     return render(request, 'hello.html', {'name': 'Hossein'})
