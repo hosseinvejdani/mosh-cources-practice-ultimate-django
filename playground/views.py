@@ -4,15 +4,17 @@ from store.models import OrderItem, Product
 
 def say_hello(request):
 
-    # # select only title and price for products in dictionary format
-    # products = Product.objects.values('id','title') # retrun dictonary
+    # Whenever you call only() it replaces the set of fields to load immediately.
+    # we can access to 'title' and 'id' immediately in hello.html
+    # but if we want to render product.unit_price in .html file, out web all
+    # will freeze, since it defered by .only() method and rendering it cause 1000 extra 
+    # queries in our case, becouse we have 1000 product in our database 
+    # The only() method is more or less the opposite of defer(). 
+    # the diiference of only() and values() methos is that by calling values()
+    # method you get data as a dictionary but in the case of only()
+    # method you get object instance.
+    queryset = Product.objects.defer('description')
 
-    # # select only title and price for products in tuple format
-    # products = Product.objects.values_list('id','title') # retrun tuple
-
-    # select products have been ordered and sort them by title
-    product_ids = OrderItem.objects.values('product__id').distinct()
-    queryset = Product.objects.filter(pk__in=product_ids).order_by('title')
 
     return render(request, 'hello.html', {'name': 'Hossein', 'products':list(queryset)})
 
