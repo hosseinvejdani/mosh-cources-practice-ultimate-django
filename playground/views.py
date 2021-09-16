@@ -4,16 +4,17 @@ from store.models import OrderItem, Product
 
 def say_hello(request):
 
-    # Whenever you call only() it replaces the set of fields to load immediately.
-    # we can access to 'title' and 'id' immediately in hello.html
-    # but if we want to render product.unit_price in .html file, out web all
-    # will freeze, since it defered by .only() method and rendering it cause 1000 extra 
-    # queries in our case, becouse we have 1000 product in our database 
-    # The only() method is more or less the opposite of defer(). 
-    # the diiference of only() and values() methos is that by calling values()
-    # method you get data as a dictionary but in the case of only()
-    # method you get object instance.
-    queryset = Product.objects.defer('description')
+    # -> select_related(*fields)
+    # Returns a QuerySet that will “follow” foreign-key relationships,
+    # selecting additional related-object data when it executes its query.
+    # This is a performance booster which results in a single more
+    # complex query but means later use of foreign-key relationships
+    #  won’t require database queries.
+    queryset = Product.objects.select_related('collection').all()
+    # if you dont use select_related here and render 
+    # product.collection.title in html file, you will send 1000 extra 
+    # query for 1000 products
+
 
 
     return render(request, 'hello.html', {'name': 'Hossein', 'products':list(queryset)})
