@@ -4,16 +4,10 @@ from store.models import OrderItem, Product
 
 def say_hello(request):
 
-    # -> select_related(*fields)
-    # Returns a QuerySet that will “follow” foreign-key relationships,
-    # selecting additional related-object data when it executes its query.
-    # This is a performance booster which results in a single more
-    # complex query but means later use of foreign-key relationships
-    #  won’t require database queries.
-    queryset = Product.objects.select_related('collection').all()
-    # if you dont use select_related here and render 
-    # product.collection.title in html file, you will send 1000 extra 
-    # query for 1000 products
+
+    # but in the case of filed with many-to-many relationships you should 
+    # use prefetch_related. like this:
+    queryset = Product.objects.prefetch_related('promotions').all()
 
 
 
