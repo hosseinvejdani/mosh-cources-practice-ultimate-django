@@ -1,25 +1,30 @@
+from django.db.models import Value, F
 from django.shortcuts import render
 from django.db.models.aggregates import Count, Min, Max, Avg, Sum
-from store.models import Order, OrderItem, Product
+from store.models import Customer, Order, OrderItem, Product
 
 
 def say_hello(request):
 
-    # How many units of product 1 have we sold?
-    result = OrderItem.objects\
-        .filter(product_id=1)\
-        .aggregate(units_sold=Sum('quantity'))
+    #  Annotate method : Annotates each object in the
+    #  QuerySet with the provided list of query expressions.
+    #  An expression may be a simple value, a reference to a
+    #  field on the model (or any related models), or an aggregate
+    #  expression (averages, sums, etc.) that has been computed
+    #  over the objects that are related to the objects in the QuerySet.
 
-    # How many orders has customer 1 placed?
-    result = Order.objects.filter(customer_id=1).aggregate(order_count=Count('id'))
+    # prcatice 1 :
+    # add new field to customer called is_new with defalut True value
+    # in this case you should use Value() method
+    queryset = Customer.objects.annotate(is_new=Value(True))
+    # you can use it multiple time :
+    queryset = Customer.objects.annotate(is_new=Value(True),is_old=Value(False))
 
-    # What is the min, max and average price of the products in collection 3?
-    result = Product.objects.filter(collection_id=3)\
-        .aggregate(
-            min=Min('unit_price'),
-            max=Max('unit_price'),
-            avg=Avg('unit_price')
-        )
+    # practice 2 :
+    # add new attribute to orderitem with annotate method
+    # which calculate and shows total price as new field -> 'total_price'
+    queryset = OrderItem.objects.annotate(total_price = F('unit_price')*F('quantity'))
+    # as you can see, you can perform computional task here in  annotate method using F methods
 
-    return render(request, 'hello.html', {'name': 'Hossein', 'result': result})
+    return render(request, 'hello.html', {'name': 'Hossein', 'result': list(queryset)})
 
