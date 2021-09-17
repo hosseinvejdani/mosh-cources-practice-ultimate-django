@@ -1,15 +1,23 @@
 from django.shortcuts import render
-from store.models import OrderItem, Product
+from django.db.models.aggregates import Count, Min, Max, Avg
+from store.models import Order, OrderItem, Product
 
 
 def say_hello(request):
 
+    # Count of objects with defalt name
+    result = Product.objects.aggregate(Count('id'))   # return result with name id__count as a dictonary
+    
+    # Count of objects with custom name
+    result = Product.objects.aggregate(count=Count('id')) # return result with name count as a dictonary
 
-    # but in the case of filed with many-to-many relationships you should 
-    # use prefetch_related. like this:
-    queryset = Product.objects.prefetch_related('promotions').all()
+    # you can get Min, Max and Avg values for objects at the same way
 
+    # you can also use multiple args in aggregate method:
+    result = Product.objects.aggregate(count=Count('id'),max_price=Max('unit_price')) 
 
+    # you can also make a custom queryset with  before aggregating, like this:
+    result = Product.objects.filter(collection_id=3).aggregate(count=Count('id'),max_price=Max('unit_price')) 
 
-    return render(request, 'hello.html', {'name': 'Hossein', 'products':list(queryset)})
+    return render(request, 'hello.html', {'name': 'Hossein', 'result': result})
 
