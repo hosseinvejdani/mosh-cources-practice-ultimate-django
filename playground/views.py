@@ -1,23 +1,25 @@
 from django.shortcuts import render
-from django.db.models.aggregates import Count, Min, Max, Avg
+from django.db.models.aggregates import Count, Min, Max, Avg, Sum
 from store.models import Order, OrderItem, Product
 
 
 def say_hello(request):
 
-    # Count of objects with defalt name
-    result = Product.objects.aggregate(Count('id'))   # return result with name id__count as a dictonary
-    
-    # Count of objects with custom name
-    result = Product.objects.aggregate(count=Count('id')) # return result with name count as a dictonary
+    # How many units of product 1 have we sold?
+    result = OrderItem.objects\
+        .filter(product_id=1)\
+        .aggregate(units_sold=Sum('quantity'))
 
-    # you can get Min, Max and Avg values for objects at the same way
+    # How many orders has customer 1 placed?
+    result = Order.objects.filter(customer_id=1).aggregate(order_count=Count('id'))
 
-    # you can also use multiple args in aggregate method:
-    result = Product.objects.aggregate(count=Count('id'),max_price=Max('unit_price')) 
-
-    # you can also make a custom queryset with  before aggregating, like this:
-    result = Product.objects.filter(collection_id=3).aggregate(count=Count('id'),max_price=Max('unit_price')) 
+    # What is the min, max and average price of the products in collection 3?
+    result = Product.objects.filter(collection_id=3)\
+        .aggregate(
+            min=Min('unit_price'),
+            max=Max('unit_price'),
+            avg=Avg('unit_price')
+        )
 
     return render(request, 'hello.html', {'name': 'Hossein', 'result': result})
 
