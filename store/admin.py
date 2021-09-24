@@ -11,13 +11,9 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title','unit_price','collection_title','inventory','inventory_status']
+    list_display = ['title','unit_price','collection','inventory','inventory_status']
     list_editable = ['unit_price','inventory']
-    list_select_related = ['collection']
     list_per_page = 10
-
-    def collection_title(self,product):
-        return product.collection.title
 
     @admin.display(ordering='inventory')
     def inventory_status(self,product):
@@ -36,4 +32,13 @@ class CustomerAdmin(admin.ModelAdmin):
     list_per_page = 10
 
 
-admin.site.register(models.Order)
+@admin.register(models.Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['pk','placed_at','payment_status','customer','customer_id']
+    list_select_related = ['customer']
+    list_editable = ['payment_status']
+    ordering = ['placed_at']
+    list_per_page = 10
+
+    def customer_id(self,order):
+        return order.customer.id
