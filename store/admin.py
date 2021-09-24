@@ -11,9 +11,13 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title','unit_price','collection','inventory','inventory_status']
-    list_editable = ['unit_price','inventory','collection']
+    list_display = ['title','unit_price','collection_title','inventory','inventory_status']
+    list_editable = ['unit_price','inventory']
+    list_select_related = ['collection']
     list_per_page = 10
+
+    def collection_title(self,product):
+        return product.collection.title
 
     @admin.display(ordering='inventory')
     def inventory_status(self,product):
