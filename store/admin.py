@@ -103,8 +103,16 @@ class CustomerAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(orders_count=Count('order'))
 
 
+class OrderItemInline(admin.TabularInline):
+    model = models.OrderItem
+    extra = 0
+    # min_num = 1
+    # max_num = 10
+    autocomplete_fields = ['product']
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
+    inlines = [OrderItemInline]
     autocomplete_fields = ['customer']
     list_display = ['pk','placed_at','payment_status','customer','customer_id']
     list_select_related = ['customer']
