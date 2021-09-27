@@ -29,6 +29,7 @@ class CollectionAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['title','unit_price','collection','inventory','inventory_status']
     list_editable = ['unit_price','inventory']
+    list_filter = ['collection','last_update ']
     list_per_page = 10
 
     @admin.display(ordering='inventory')
