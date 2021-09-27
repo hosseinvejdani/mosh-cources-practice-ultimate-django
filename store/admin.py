@@ -27,6 +27,7 @@ class InventoryFilter(admin.SimpleListFilter):
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
     search_fields = ['title']
+    autocomplete_fields = ['featured_product']
     list_display = ['title','products_count']
     list_per_page = 10
 
@@ -48,6 +49,7 @@ class CollectionAdmin(admin.ModelAdmin):
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields = ['collection']
+    search_fields = ['title']
     prepopulated_fields = {
         'slug' : ['title']
     }
