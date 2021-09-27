@@ -26,6 +26,7 @@ class InventoryFilter(admin.SimpleListFilter):
 
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
+    search_fields = ['title']
     list_display = ['title','products_count']
     list_per_page = 10
 
@@ -43,8 +44,13 @@ class CollectionAdmin(admin.ModelAdmin):
             .annotate(products_count=Count('product'))
 
 
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['collection']
+    prepopulated_fields = {
+        'slug' : ['title']
+    }
     actions = ['clear_inventory']
     list_display = ['title','unit_price','collection','inventory','inventory_status']
     list_editable = ['unit_price','inventory']
@@ -97,6 +103,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['customer']
     list_display = ['pk','placed_at','payment_status','customer','customer_id']
     list_select_related = ['customer']
     list_editable = ['payment_status']
